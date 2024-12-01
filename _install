@@ -1,0 +1,13 @@
+{% if get_data_count('users') < 1 %}
+
+{% do save_data('users', {'nick':'admin', 'pass': md5('passdemo')}) %}
+
+{% do save_data('category', {'name': 'first category','slug': 'first-category'}) %}
+{% do save_data('subcategory', {'name': 'first category','slug': 'first-category'}) %}
+
+{% set title = 'the first article' %}
+{% set slug = slug(title) %}
+{% set content = "Welcome to wap4.co. This is the first article of the blog, and is edited in markdown. For information security, please edit the '_install' file and delete all data of this blog." %}
+{% do save_data('blog', {'category': '1', 'title': title, 'slug': slug, 'content': content}) %}
+
+{% endif %}

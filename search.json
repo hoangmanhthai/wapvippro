@@ -1,0 +1,9 @@
+{% set blog %}{% for blog in get_data('blog') %}{% if blog.id %}{% set data = blog.data %}{% set category = get_data_by_id('category', data.category|trim).data %}
+{
+    "id" : "{{blog.id}}",
+    "category" : "{{category.name}}",
+    "title" : "{{data.title}}",
+    "slug" : "{{data.slug}}-{{blog.id}}.html"
+}{% if loop.last == false %},{% endif %}
+{% endif %}{% endfor %}{% endset %}
+[{{blog}}]

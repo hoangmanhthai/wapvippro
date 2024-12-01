@@ -1,0 +1,10 @@
+{% use '_blocks' %}
+{% set title = 'Page not found!' %}
+{{block('header')}}
+<article>
+    <header>
+        <h1>404</h1>
+    </header>
+    <p>Page not found!</p>
+</article>
+{{block('footer')}}

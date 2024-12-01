@@ -1,0 +1,84 @@
+{% macro is_login() %}{% set token = get_cookie('token')|default(null) %}{% set user = get_data_by_id('users', 1).data %}{% if user['pass'] == token %}true{% endif %}{% endmacro %}
+
+{% macro ago(time_ago) %}
+{% apply spaceless %}
+{% set now = 'now'|date('U') %}
+{% set time_ago = time_ago|date('U') %}
+{% set timeht=now|date('U', 'Asia/Ho_Chi_Minh') %}
+{% set time = time_ago|date('U', 'Asia/Ho_Chi_Minh') %}
+{% set time_giay = timeht - time %}
+{% set time_phut = (time_giay / 60 )|round(0,'floor') %}
+{% set time_day = timeht|date('z', 'Asia/Ho_Chi_Minh')-time|date('z', 'Asia/Ho_Chi_Minh') %}
+{% set fulltime = time_ago|date('d.m.Y - H:i', 'Asia/Ho_Chi_Minh') %}
+{% set minitime = time_ago|date('H:i', 'Asia/Ho_Chi_Minh') %}
+{% if time_day == 0 %}
+{% if time_giay <= 60 %}
+{{time_giay~' seconds ago'}}
+{% elseif time_phut <= 60 %}
+{{time_phut~' minutes ago'}}
+{% else %}
+{{'Today, '~minitime}}
+{% endif %}
+{% elseif time_day == 1 %}
+{{'Yesterday, '~minitime}}
+{% else %}
+{{fulltime}}
+{% endif %}
+{% endapply %}
+{% endmacro %}
+
+{% macro paging(page, p, max, b) %}
+  {% apply spaceless %}
+    {% if max > 1 %}
+      <div class="topmenu">
+          <strong>Trang </strong>
+        {% set a = '<a class="pagenav" href="/' ~ page ~ '' %}
+        {% if p > max %}
+          {% set p = max %}
+        {% endif %}
+        
+        {% if p > 1 %}
+            {{ a | raw }}{{ p - 1 }}{{ b }}">« Trước</a>&#32
+        {% endif %}
+
+        {% if p > 3 %}
+            {{ a | raw }}1{{ b }}">1</a>&#32
+        {% endif %}
+
+        {% if p > 4 %}
+            <span class="page-link">...</span>&#32
+        {% endif %}
+
+        {% if p > 2 %}
+            {{ a | raw }}{{ p - 2 }}{{ b }}">{{ p - 2 }}</a>&#32
+        {% endif %}
+
+        {% if p > 1 %}
+            {{ a | raw }}{{ p - 1 }}{{ b }}">{{ p - 1 }}</a>&#32
+        {% endif %}
+
+          <span class="currentpage">{{ p }}</span>&#32
+
+        {% if p < max - 1 %}
+            {{ a | raw }}{{ p + 1 }}{{ b }}">{{ p + 1 }}</a>&#32
+        {% endif %}
+
+        {% if p < max - 2 %}
+            {{ a | raw }}{{ p + 2 }}{{ b }}">{{ p + 2 }}</a>&#32
+        {% endif %}
+
+        {% if p < max - 3 %}
+            <span class="page-link">...</span>&#32
+        {% endif %}
+
+        {% if p < max %}
+            {{ a | raw }}{{ max }}{{ b }}" class="page-link">{{ max }}</a>&#32
+        {% endif %}
+
+        {% if p < max %}
+            {{ a | raw }}{{ p + 1 }}{{ b }}">Sau »</a>&#32
+        {% endif %}
+      </div>
+    {% endif %}
+  {% endapply %}
+{% endmacro %}

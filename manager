@@ -1,0 +1,165 @@
+{% use '_blocks' %}
+{% set title = 'Dashboard' %}
+{% from '_func' import is_login %}
+{% if is_login()|trim != 'true' %}{{redirect('/')}}{% endif %}
+{{block('header')}}
+<article>
+    
+{% set uri = get_uri_segments() %}
+
+{% if uri[1] == 'category' %}{# ======================== manage category ======================== #}
+
+{% set error = null %}
+{% if request_method()|lower == 'post' %}
+{% set CategoryName = get_post('CategoryName') %}
+{% set categoryid = get_post('categoryid') %}
+{% set SlugName = slug(CategoryName) %}
+{% if CategoryName|length in 5..200 %}
+{% if categoryid == 0 %}
+{% do save_data('category', {'name': CategoryName,'slug': SlugName}) %}
+{% else %}
+{% do save_data('subcategory', {'category': categoryid,'name': CategoryName,'slug': SlugName}) %}
+{% endif %}
+{{redirect('?created=ok')}}
+{% else %}
+{% set error = 'Invalid category name'%}
+{% endif %}
+{% endif %}
+<div class="card" style="margin-bottom:8px">
+    <div class="phdr" id="hotro"><b>Manage category</b></div>
+    <div class="news">
+        {% if error %}<p class="alert alert-warning">{{error|raw}}</p>{% endif %}
+    <form method="post" action="">
+        <div class="input-group">
+            <div class="form-outline" data-mdb-input-init>
+                <input name="CategoryName" 
+                type="text" 
+                placeholder="Create new category" 
+                class="form-control" required/>
+            </div>
+            <div>
+                <select name="categoryid" size="1">
+                <option value="0">chuyên mục mẹ</option>
+                {% if get_data_count('category') < 1 %}
+    <div class="list1">No categories have been created yet</div>
+{% else %}
+{% for category in get_data('category') %}
+{% set data = category.data %}
+<option value="{{category['id']}}">{{data['name']}}</option>
+{% endfor %}
+{% endif %}
+</select>
+            </div>
+            <button type="submit" class="btn btn-primary" name="create">Submit</button>
+        </div>
+    </form>
+    </div>
+</div>
+
+<div class="card list-group">
+    <div class="phdr">Danh sách chuyên mục đã tạo</div>
+{% if get_data_count('category') < 1 %}
+    <div class="list1">No categories have been created yet</div>
+{% else %}
+{% for category in get_data('category') %}
+{% set data = category.data %}
+    <div class="list1">
+        <i class="fa fa-angle-right" aria-hidden="true"></i> 
+        <a href="/category/{{data['slug']}}.{{category['id']}}">{{data['name']}}</a>
+    </div>
+{% endfor %}
+{% endif %}
+</div>
+
+{% elseif uri[1] == 'post' %}{# ======================== publish article ======================== #}
+{% if get_data_count('category') < 1 %}
+{{redirect('/manager/category')}}
+{% endif %}
+
+{% set blogid = get_uri_segments()[2] %}
+{% if blogid and check_data('blog', blogid|trim) %}{# === edit === #}
+
+{% if get_get('action') == 'delete' %}
+    {% do delete_data_by_id('blog', blogid|trim) %}
+    {{redirect('/')}}
+{% endif %}
+
+{% set blogdata = get_data_by_id('blog', blogid|trim).data %}
+{% set name, category, content = get_post('title')|trim|default(blogdata.title), get_post('category')|trim|default(blogdata.category), get_post('content')|trim|default(blogdata.content) %}
+{% set error = null %}
+{% if request_method()|lower == 'post' %}
+    {% if name|length not in 5..20000 %}
+        {% set error = 'Invalid title. (length 5..20000)' %}
+    {% elseif content|length not in 5..1000000 %}
+        {% set error = 'Invalid content. (length 5..1000000)' %}
+    {% else %}
+        {% set slug = slug(name) %}
+        {% do update_data_by_id('blog', blogid|trim, {'category': category, 'title': name, 'slug': slug, 'content': content}) %}
+        {{redirect('/view/'~slug~'-'~blogid|trim~'.html')}}
+    {% endif %}
+{% endif %}
+
+{% else %}{# === publish === #}
+
+{% set error = null %}
+{% if request_method()|lower == 'post' %}
+    {% set name, category, content = get_post('title')|trim, get_post('category')|trim, get_post('content')|trim %}
+    {% if name|length not in 5..20000 %}
+        {% set error = 'Invalid title. (length 5..20000)' %}
+    {% elseif content|length not in 5..100000 %}
+        {% set error = 'Invalid content. (length 5..1000000)' %}
+    {#{% elseif get_data_by_id('category', category).id|trim != category|trim %}
+        {% set error = 'Invalid category. Category is not exists!' %}#}
+    {% else %}
+        {% set slug = slug(name) %}
+        {% do save_data('blog', {'category': category, 'title': name, 'slug': slug, 'content': content}) %}
+        {{redirect('/')}}
+    {% endif %}
+{% endif %}
+
+{% endif %}
+
+<div class="card" style="margin-bottom:8px">
+    <div class="phdr">
+        <i class="fa fa-pencil" aria-hidden="true"></i> {% if blogid and check_data('blog', blogid|trim) %}Edit article{% else %}Publish new articles{% endif %}
+    </div>
+    <div class="card-body">
+{% if error %}<p class="alert alert-warning">{{error|raw}}</p>{% endif %}
+<form name="form" action method="post">
+<p><input name="title" type="text" value="{{name}}" placeholder="Title" maxlength="300" class="form-control" required/></p>
+<p><select name="category" class="form-select">
+    <option selected>Select category</option>
+    {% for cat in get_data('category') %}{% set data = cat.data %}
+    <option value="{{cat['id']}}"{% if cat['id'] == category %} selected{% endif %}>{{data['name']}}</option> 
+    {% endfor %}
+</select></p>
+<p><textarea id="content" name="content" rows="15" placeholder="Enter content, use Markdown">{{content}}</textarea></p>
+<p><input type="submit" name="submit" value="{% if blogid and check_data('blog', blogid|trim) %}Republished{% else %}Publish{% endif %}" style="width:100%" class="btn btn-success btn-block"/></p>
+</form>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<script>
+new SimpleMDE({
+element: document.getElementById("content"),
+spellChecker: false,
+});
+</script>
+{% else %}{# ============================= view index =========================================== #}
+<div class="card list-group">
+    <div class="phdr" id="hotro"><b>Dashboard</b></div>
+    <div class="list1">
+        <a href="/manager/category">Manage category</a>
+    </div>
+    <div class="list1">
+        <a href="/manager/post" title="Publish new articles">Publish new articles</a>
+    </div>
+    <div class="list1">
+        <a href="/logout" title="Logout account">Logout</a>
+    </div>
+</div>
+{% endif %}
+
+</article>
+{{block('footer')}}

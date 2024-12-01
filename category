@@ -1,0 +1,90 @@
+{% set id = get_uri_segments()|join('/')|split('.')[0]|split('-')|last %}
+{% set category = get_data_by_id('subcategory', id) %}
+{% set data_category = category.data %}
+{% set title = data_category.name %}
+
+
+{% use '_blocks' %}
+{{block('header')}}
+{% from '_func' import ago, paging %}
+{% if check_data('subcategory', id) != true %}
+
+<article>
+    <header>
+        <h1>Categories</h1>
+    </header>
+    <ul class="archive">
+{% if get_data_count('subcategory') < 1 %}
+        <li>No categories have been created yet</li>
+{% else %}
+{% for subcategory in get_data('subcategory') %}
+{% set data = subcategory.data %}
+{% if data['slug'] %}
+        <li>
+            <a href="/category/{{data['slug']}}.{{subcategory['id']}}">{{data['name']}}</a> [{{get_data_count('blog', {'category':subcategory['id']})}}]
+        </li>
+{% endif %}
+{% endfor %}
+{% endif %}
+    </ul>
+</article>
+
+{% else %}
+<div class="listmenu">
+<article temscope itemtype="https://schema.org/BreadcrumbList"
+    <header>
+        <span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a href="/" itemprop="item" title="Home"><span itemprop="name">Home</span></a>
+            <meta itemprop="position" content="1" />
+        </span>
+        <span class="arrow"><span>»</span></span>
+        <span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a href="/category" itemprop="item" title="Category"><span itemprop="name">Category</span></a>
+            <meta itemprop="position" content="2" />
+        </span>
+        <span class="arrow"><span>»</span></span>
+        <span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a href="/category/{{data_category.slug}}-{{data_blog.category}}.html" itemprop="item" title="{{data_category.name}}">
+                <span itemprop="name">{{data_category.name}}</span>
+            </a>
+            <meta itemprop="position" content="3" />
+        </span>
+    </header>
+</article>
+</div>
+<div class="phdr" title="{{data_category.name}}">» {{data_category.name}}</div>
+{% set same %}{% for blog in get_data('blog') %}{% set data = blog.data %}{% if data.category == id %}{{blog.id}}@{% endif %}{% endfor %}{% endset %}
+{% set listsame = same|trim|split('@') %}
+{% set countsame = listsame|length-1 %}
+{% if countsame > 0 %}
+    {% set per = '10' %}
+    {% set page_max = total//per %}
+    {% if total//per != total/per %}{% set page_max = total//per+1 %}{% endif %}
+    {% set p = get_get('page')|default(1) %}
+    {% if p matches '/[a-zA-z]|%/' or p < 1 %}{% set p = 1 %}{% endif %}
+    {% if p > page_max %}{% set p = page_max %}{% endif %}
+    {% set st=p*per-per %}
+    
+    {% for i in shuffle(listsame)|slice(st, per) %}
+    {% set blog = get_data_by_id('blog', i|trim) %}
+    {% set data = blog.data %}
+    {% if blog.id %}
+    {% set view = '/view/'~data.slug~'-'~blog.id~'.html' %}
+    {% set thumbnail = 'https://i.imgur.com/39XB2Gb.jpeg'%}
+    {% set category = get_data_by_id('category', data.category).data %}
+        {% set desc = markdown(data.content)|striptags|replace({'\t': '', '\n': '', '\r': ''})|slice(0,150)~'...' %}
+        <div class="list1">
+            <img src="https://github.com/hoangmanhthai/wapvippro/raw/refs/heads/main/images/blue_dot.gif" alt="»">
+            <a href="{{view}}" title="{{data.title}}"> 
+            <strong>{{data.title}}</strong>
+            </a>
+        </div>
+    {% endif %}
+    {% endfor %}
+    {{paging('?page=',p,page_max)|replace({'/=':'/','/?':'?'})|raw}}
+{% else %}
+<article>No articles have been published yet</article>
+{% endif %}
+
+{% endif %}
+{{block('footer')}}

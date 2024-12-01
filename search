@@ -1,0 +1,103 @@
+{% use '_blocks' %}
+{% set title = 'Search' %}
+{{block('header')}}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
+<article>
+    <form method="get" action="/search">
+        <div class="input-group">
+            <div class="form-outline">
+                <input id="search-input" 
+                type="searh" 
+                placeholder="Enter anything..." 
+                class="form-control" 
+                {% if get_uri_segments()[0] == 'search' and get_get('query') %} value="{{get_get('query')}}"{% endif %}/>
+            </div>
+            <button id="search-button" type="button" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+    <ul id="results-container"></ul>
+</article>
+
+<script>
+    $(document).ready(function() {
+        let store = [];
+        let query = getParameterByName('query');
+        let searchResults = [];
+        let categories = {};
+
+        function getParameterByName(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        function fetchData() {
+            fetchBlogList();
+            fetchCategories();
+        }
+
+        function fetchBlogList() {
+            $.ajax({
+                url: '/search.json',
+                method: 'GET',
+                success: function(data) {
+                    store = data;
+                    handleInitialSearch();
+                },
+                error: function(error) {
+                    console.error('Error fetching blog data:', error);
+                }
+            });
+        }
+
+        function displaySearchResults() {
+            const resultsContainer = $('#results-container');
+            resultsContainer.empty();
+
+            if (searchResults.length) {
+                searchResults.forEach(result => {
+                    resultsContainer.append(`
+                            <li>
+                                [${result.category}] <a href="/view/${result.slug}">${result.title}</a>
+                            </li>
+                        `);
+                });
+            } else {
+                resultsContainer.append('<li>No results match the search keyword!</li>');
+            }
+        }
+
+        function handleSearchChange() {
+            query = $('#search-input').val();
+            search();
+        }
+
+        function search() {
+            if (query) {
+                const normalizedQuery = query.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+                searchResults = store.filter(blog =>
+                    blog.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().includes(normalizedQuery)
+                );
+            } else {
+                searchResults = [];
+            }
+            displaySearchResults();
+        }
+
+        function handleInitialSearch() {
+            if (query) {
+                $('#search-input').val(query);
+                search();
+            } else {
+                $('.rmenu').show();
+            }
+        }
+
+        $('#search-input').on('input', handleSearchChange);
+
+        fetchData();
+    });
+</script>
+
+{{block('footer')}}

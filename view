@@ -1,0 +1,90 @@
+{% set id = get_uri_segments()|join('/')|split('.')[0]|split('-')|last %}
+{% if check_data('blog', id) != true %}{{redirect('/')}}{% endif %}
+{% set blog = get_data_by_id('blog', id) %}
+{% set data_blog = blog.data %}
+{% set title = data_blog.title %}
+{% set category = get_data_by_id('category', data_blog.category) %}
+{% set data_category = category.data %}
+{% set data = blog.data %}
+{% set view = '/view/'~data.slug~'-'~blog.id~'.html' %}
+
+{% use '_blocks' %}
+{% from '_func' import ago, is_login %}
+{{block('header')}}
+<div class="listmenu">
+<article itemscope itemtype="https://schema.org/BreadcrumbList">
+    <span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a href="/" itemprop="item" title="Home"><span itemprop="name">Home</span></a>
+        <meta itemprop="position" content="1" />
+    </span>
+    <span class="arrow"><span>»</span></span>
+    <span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a href="/category" itemprop="item" title="Category"><span itemprop="name">Category</span></a>
+        <meta itemprop="position" content="2" />
+    </span>
+    <span class="arrow"><span>»</span></span>
+    <span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a href="/category/{{data_category.slug}}-{{data_blog.category}}.html" itemprop="item" title="{{data_category.name}}">
+            <span itemprop="name">{{data_category.name}}</span>
+        </a>
+        <meta itemprop="position" content="3" />
+    </span>
+</article>
+</div>
+
+<div class="phdr2" id="xem">
+    <a href="#b">
+        <img src="https://github.com/hoangmanhthai/wapvippro/raw/refs/heads/main/theme/default/images/down.png" alt="↓↓" width="20" height="10" border="0" title="{{data_blog.title}}"></a> 
+        <a href="{{view}}" title="{{data_blog.title}}">
+            <h2><b>{{data_blog.title}}</b></h2></a></div>
+            <div class="mainblok"><div class="forumtxt"> 
+        {% if is_login()|trim == 'true' %}
+            <br/><b>Tools: </b> 
+            <i class="fa fa-pencil-square-o" aria-hidden="true"></i> <a href="/manager/post/{{blog.id}}" title="Edit">Edit article</a> | 
+            <i class="fa fa-trash" aria-hidden="true"></i> <a href="/manager/post/{{blog.id}}?action=delete" title="Remove">Remove</a>
+        {% endif %}
+        <article>
+    <header></header>
+                <p>{{markdown(data_blog.content)|raw}}</p>
+            
+        </article>
+<div style="text-align: right;font-style: italic;"><time datetime="{{blog.time|date("Y-m-d\TH:i:sP")}}">{{ago(blog.time)}}</time></div>
+<div style="text-align:right; margin-top:4px"><a href="#comments" class="pagenav">» Bình Luận «</a></div>
+</div></div>
+{% set same %}{% for data in get_data('blog') %}{% if data.id != blog.id %}{{data.id}}@{% endif %}{% endfor %}{% endset %}
+{% set listsame = same|trim|split('@') %}
+{% set countsame = listsame|length-1 %}
+{% if countsame > 1 %}
+<div class="phdr2"><b>» BẠN ĐÃ XEM CHƯA?</b></div>
+<div class="mainblok">
+    {% for i in shuffle(listsame)|slice(0, 10) %}
+    {% set blog = get_data_by_id('blog', i|trim) %}
+    {% set data = blog.data %}
+    {% if blog.id %}
+    {% set view = '/view/'~data.slug~'-'~blog.id~'.html' %}
+    {% set thumbnail = 'https://i.imgur.com/39XB2Gb.jpeg'%}
+    {% set category = get_data_by_id('category', data.category).data %}
+        <div class="list1">
+            <img src="https://github.com/hoangmanhthai/wapvippro/raw/refs/heads/main/images/red_dot.gif" alt="»">
+            <a href="{{view}}" title="{{data.title}}"> 
+            <strong>{{data.title}}</strong>
+            </a>
+        </div>
+    {% endif %}
+    {% endfor %}
+    <div class="daik">
+        <div id="tab">
+            <table cellpadding="0" cellspacing="0" width="100%">
+                <tbody>
+                    <tr>
+                        <td width="25%" style="border-left:1px solid #08A8E8;"><img src="https://github.com/hoangmanhthai/wapvippro/raw/refs/heads/main/images/home.gif"> <a href="https://ninjaschool.wap4.co/"><b>HOME</b></a></td>
+                        <td width="25%"><img src="https://github.com/hoangmanhthai/wapvippro/raw/refs/heads/main/images/mini.gif"> <a href="https://ninjaschool.wap4.co/"><b>MINI</b></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+{% endif %}
+
+{{block('footer')}}

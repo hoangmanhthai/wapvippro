@@ -1,0 +1,10 @@
+{% use '_blocks' %}
+{% set title = 'About us' %}
+{{block('header')}}
+<article>
+    <header>
+        <h1>About</h1>
+    </header>
+    <p>Write something about yourself</p>
+</article>
+{{block('footer')}}

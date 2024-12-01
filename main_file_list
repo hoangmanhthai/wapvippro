@@ -1,0 +1,78 @@
+{% use '_blocks' %}
+{{block('header')}}
+{% from '_func' import ago, paging %}
+{% set now = 'now'|date('d/m/Y', 'Asia/Ho_Chi_Minh') %}
+
+
+
+<div class="phdr"><strong>» BẢN HOT NGÀY {{now}}</strong></div>
+{% set total = get_data_count('blog') %}
+{% if total < 1 %}
+<article><p>No articles have been published yet</p></article>
+
+{% else %}
+    {% set per = '10' %}
+    {% set page_max = total//per %}
+    {% if total//per != total/per %}{% set page_max = total//per+1 %}{% endif %}
+    {% set p = get_get('page')|default(1) %}
+    {% if p matches '/[a-zA-z]|%/' or p < 1 %}{% set p = 1 %}{% endif %}
+    {% if p > page_max %}{% set p = page_max %}{% endif %}
+    {% set st=p*per-per %}
+
+    {% for blog in get_data('blog', per, p, 'id','desc') %}
+        {% set data = blog.data %}
+        {% set view = '/view/'~data.slug~'-'~blog.id~'.html' %}
+        {% set thumbnail = 'https://i.imgur.com/39XB2Gb.jpeg'%}
+        {% set category = get_data_by_id('category', data.category).data %}
+        {% set desc = markdown(data.content)|striptags|replace({'\t': '', '\n': '', '\r': ''})|slice(0,150)~'...' %}
+        
+        <div class="list1">
+            <img src="https://github.com/hoangmanhthai/wapvippro/raw/refs/heads/main/images/hottop.gif" alt="»">
+            <a href="{{view}}" title="{{data.title}}"> 
+            <strong>{{data.title}}</strong>
+            </a>
+        </div>
+    {% endfor %}
+    {{paging('?page=',p,page_max)|replace({'/=':'/','/?':'?'})|raw}}
+    {% endif %}
+    {#chuyên mục mẹ#}
+    {% set total_category = get_data_count('category') %}
+{% if total_category > 0 %}
+{% for category in get_data('category',per,p,'id','asc') %}
+<div class="phdr"><strong>» {{category.data.name}}</strong></div>
+
+
+{#chuyên mục con#}
+
+{% set same %}{% for subcategory in get_data('subcategory') %}{% set data = subcategory.data %}{% if data.category == category.id %}{{subcategory.id}}@{% endif %}{% endfor %}{% endset %}
+{% set listsame = same|trim|split('@') %}
+{% set countsame = listsame|length-1 %}
+{% if countsame > 0 %}
+{% set totals = get_data_count('subcategory',{'category':category.id}) %}
+    {% set per = '10' %}
+    {% set page_max = totals//per %}
+    {% if totals//per != totals/per %}{% set page_max = totals//per+1 %}{% endif %}
+    {% set p = get_get('page')|default(1) %}
+    {% if p matches '/[a-zA-z]|%/' or p < 1 %}{% set p = 1 %}{% endif %}
+    {% if p > page_max %}{% set p = page_max %}{% endif %}
+    {% set st=p*per-per %}
+    
+    {% for i in shuffle(listsame)|slice(st, per) %}
+    {% set subcategory = get_data_by_id('subcategory', i|trim) %}
+    {% set data = subcategory.data %}
+    {% if subcategory.id %}
+    {% set view = '/category/'~data.slug~'-'~subcategory.id~'.html' %}
+    {% set thumbnail = 'https://i.imgur.com/39XB2Gb.jpeg'%}
+    <div class="list1">
+        <img src="https://github.com/hoangmanhthai/wapvippro/raw/refs/heads/main/images/muipro.gif" alt="»"> 
+        <a href="{{view}}" title="{{data.name}}">
+            <strong>{{data.name}}</strong></a></div>
+    {% endif %}
+    {% endfor %}
+    {{paging('?page=',p,page_max)|replace({'/=':'/','/?':'?'})|raw}}
+{% else %}
+<article>No articles have been published yet</article>
+{% endif %} 
+{% endfor %}
+{% endif %}
+{{block('footer')}}

@@ -1,0 +1,5 @@
+{% from '_func' import is_login %}
+{% if is_login()|trim == 'true' %}
+{{delete_cookie('token')}}
+{% endif %}
+{{redirect('/')}}

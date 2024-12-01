@@ -1,0 +1,54 @@
+{% block header %}
+{% set default_description = 'Cap Nhat Hack Game Moi Nhat Cua Dien Thoai Tren Wap Tai Game Cuc Nhanh Va Hoan Toan Mien Phi' %}
+{% set default_title = 'Wap Tải Game Hack MOD Độc Quyền Cho Điện Thoại Miễn Phí' %}
+{% from '_func' import is_login %}
+{% include "_install" %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="{{description|default('default_description')}}"> 
+    <meta property="og:site_name" content="{{default_title}}">
+    <meta name="theme-color" content="#22292F">
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="google" content="notranslate">
+    <meta name="format-detection" content="telephone=no">
+    <title>{{title|default(default_title)}}</title>
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="dns-prefetch" href="https://i.imgur.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="/css.style" type="text/css"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+    <div class="header" id="tren" style="text-align:center">
+        <a href="/"><img src="https://github.com/hoangmanhthai/wapvippro/raw/refs/heads/main/images/logo.png"></a>
+    </div>
+    <div class="daik"><div id="tab"><table cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td width="25%" style="border-left:1px solid #08A8E8;"><a href="/web/20190212033429/http://wapvip.pro/page/NGOC-RONG-ONLINE-16968.htm#new"><b>NRO</b></a></td><td width="25%"><a href="/web/20190212033429/http://wapvip.pro/page/MOBIARMY-CAN-GOC-BAN-3756.htm#new"><b>ARMY</b></a></td><td width="25%"><a href="/web/20190212033429/http://wapvip.pro/page/AVATAR-PLUS-TEAMOBI-28.htm#new"><b>AVATAR</b></a></td><td width="25%"><a href="/web/20190212033429/http://wapvip.pro/page/NINJA-SCHOOL-ONLINE-3758.htm#new"><b>NINJA</b></a></td></tr></tbody></table></div>
+</div>
+<div class="maintxt">
+    <div class="list1"><img src="https://github.com/hoangmanhthai/wapvippro/raw/refs/heads/main/files/luutru/hinhanh/avatar.png" alt="»" height="15px" width="15px"> <a href="http://files.wapvip.pro/files/luutru/avatar/Avatar257.jar"><b style="color: red;">Mạng Xã Hội Avatar 2.5.7</b></a></div>
+    <div class="list1"><img src="https://github.com/hoangmanhthai/wapvippro/raw/refs/heads/main/files/luutru/hinhanh/mobiarmy.png" alt="»" height="15px" width="15px"> <a href="http://files.wapvip.pro/files/luutru/hack-army-239/Army239.jar"><b style="color:blue;">Bắn Súng Mobi Army 2.3.9</b></a></div>
+    <div class="list1"><img src="https://github.com/hoangmanhthai/wapvippro/raw/refs/heads/main/files/luutru/hinhanh/phongvantruyenky.png" alt="»" height="15px" width="15px"> <a href="http://taifile.mobi/10226-ba-khi-262"><b style="color: green;">Phong Vân Truyền Kỳ v30</b></a></div>
+    <div class="list1"><img src="https://github.com/hoangmanhthai/wapvippro/raw/refs/heads/main/images/ninja.png" alt="»" height="15px" width="15px"> <a href="http://taifile.mobi/10226-ninja-school-480"><b style="color:#CC6600;">Ninja School Online 1.4.8</b></a></div>
+    <div class="list1"><img src="https://github.com/hoangmanhthai/wapvippro/raw/refs/heads/main/files/luutru/hinhanh/kpah.png" alt="»" height="15px" width="15px"> <a href="http://taifile.mobi/10226-khi-phach-anh-hung-158"><b style="color: purple;">Khí Phách Anh Hùng 1.7.6</b></a></div>
+    <div class="chiase" style="text-align:center"><img src="https://github.com/hoangmanhthai/wapvippro/raw/refs/heads/main/images/like2.png" alt="»"><b> <a href="http://wapvip.pro/fb.php" style="color:red" rel="nofollow"> Like</a></b><font color="red"> Ủng Hộ <b>WapVip.Pro</b></font><br>
+<iframe src="//web.archive.org/web/20190212033429if_/http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Ffacebook.com%2Fhotrowv&amp;width=115&amp;layout=button&amp;action=like&amp;show_faces=false&amp;share=true&amp;height=20" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:115px; height:20px;" allowtransparency="true" data-ruffle-polyfilled=""></iframe></div>
+<div class="searchContainer"><b style="color:green;">»</b> <a href="http://youtube.com/rongluffy?sub_confirmation=1"><b style="color:blue;">YOUTUBE</b></a> - <a href="http://wapvip.pro/fbgroup.php"><b style="color:green;">GROUP</b></a> - <a href="http://wapvip.pro/fbmbv.php"><b style="color:red;">FB ADMIN</b></a> <b style="color:green;">«</b>
+<form action="http://google.com/search" method="get"><input type="hidden" name="sitesearch" value="wapvip.pro"><input type="text" name="q" value="Bạn Cần Tìm Gì?" size="15"><input type="submit" value="Tìm"></form></div>
+
+    
+{% endblock %}
+
+{% block footer %}
+{% from '_func' import is_login %}
+</div>
+<div class="phdr" id="hotro"><b>» TRUNG TÂM HỖ TRỢ</b></div>
+<div class="list1"><img src="https://github.com/hoangmanhthai/wapvippro/raw/refs/heads/main/images/mail.png" alt="»"> <a href="#"><b><font color="red">T.T Báo Lỗi</font> - <font color="blue">Hỗ Trợ</font> - <font color="green">Góp Ý</font></b></a></div>
+<div class="logo" style="text-align:center"><b><a style="color:black;font-weight:bold;" href="/web/20190212033429/http://wapvip.pro/">WapVip.Pro</a> © 2018</b><br>Hỗ Trợ: <a href="http://wapvip.pro/fb.php"><font color="#aaffaa"><u>FanPage WapVip.Pro</u></font></a></div>
+</body>
+</html>
+{% endblock %}
